@@ -33,8 +33,9 @@ roll() {
 
 #Function to declare an initial directory for environment.
 start() {
-echo -e "${BLINKPURP}###${NC} ${RED}Welcome to${NC} ${LPURPLE}Nick's${NC} ${RED}ROOT-CA roll-out script 1 out 2${NC}${BLINKPURP} ###${NC}"
+echo -e "${BLINKPURP}###${NC} ${RED}Welcome to${NC} ${LPURPLE}Nick's${NC} ${RED}ROOT-CA roll-out script 2 out 2${NC}${BLINKPURP} ###${NC}"
 echo -e "${CYAN}Please make sure you DO NOT run this script as${NC}${RED} privileged user${NC}${CYAN}, are you NOT?${NC}${YEL} [Y/N] ${NC}"
+echo -e "${CYAN}This script is used for${NC}${RED}Making basic certificate and key combo's${NC}${CYAN}${NC}${YEL}${NC}"
 read -p "Input: " -n 1 -r
 echo -e "${YEL}"
 if [[ $REPLY =~ ^[Nn]$  ]]
@@ -45,56 +46,33 @@ fi
 
 }
 
-#Function to change hostname
-change_hostname() {
-sudo hostnamectl set-hostname G05-RootCA01
-}
-
-Disable_selinux() {
-sudo sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
-}
-
-Enable_EPEL_RSA() {
-sudo dnf install epel-release -y
-sudo dnf install easy-rsa -y
-}
-
-mkdir_PKI_and_perms(){
-#made by the default user; normal users should be able to manage and interact with CA without elevated privilges
-mkdir ~/easy-rsa
-ln -s /usr/share/easy-rsa/3/* ~/easy-rsa/
-chmod 700 /home/g05-rootca01/easy-rsa
-cd ~/easy-rsa
-./easyrsa init-pki
-}
-
-edit_vars() {
-cat >~/easy-rsa/vars <<EOL
-set_var EASYRSA_REQ_COUNTRY    "NL"
-set_var EASYRSA_REQ_PROVINCE   "Overijssel"
-set_var EASYRSA_REQ_CITY       "Deventer"
-set_var EASYRSA_REQ_ORG        "Ijsselstreek"
-set_var EASYRSA_REQ_EMAIL      "admin@groep5.local"
-set_var EASYRSA_REQ_OU         "Community"
-set_var EASYRSA_ALGO           "ec"
-set_var EASYRSA_DIGEST         "sha512"
-EOL
-}
-
-build_ca() {
+read_input(){
 clear
-roll "Part one of the script is about done; choose a secure password and remember it"
-roll "Next just fill-in the Host name as the DN [g05-rootca01]"
-cd ~/easy-rsa
-./easyrsa build-ca
+roll "Enter the name of the server i.e: Moodle, DNS01, DNS02, Proxy"
+read name
+roll "Enter the type: client, server or ca"
+read type
+roll "Information entered: $name is a $type"
 }
+
+creating_dirs_and_certs() {
+mkdir ~/Desktop/$name-csr
+cd ~/Desktop/$name-csr
+openssl genrsa -out $name-$type.key
+openssl req -new -key $name-$type.key -out $name-$type.req
+cd ~/easy-rsa
+./easyrsa import-req ~/Desktop/$name-csr/$name-$type.req $name-$type
+./easyrea sign-req $type $name-$type
+
+}
+
 
 end() {
 clear
-roll "Underneath is your distributable certificate to all hosts."
+roll "Underneath is your distributable certificate from: $name $type."
 roll "A workable copy is distributed to the desktop."
-cat ~/easy-rsa/pki/ca.crt
-cp /home/g05-rootca01/easy-rsa/pki/ca.crt /home/g05-rootca01/Desktop
+cat ~/easy-rsa/pki/issued/$name-$type.crt
+cp ~/easy-rsa/pki/issued/$name-$type.crt /home/g05-rootca01/Desktop
 clear
 roll "Instructions to import certificate on other machines:"
 roll "On CentOS, Fedora or other RedHat distro's do the following"
@@ -105,15 +83,9 @@ roll "${RED}Debian and Ubuntu derived distro's. ${NC}"
 echo -e "${YEL}1. Change /tmp/ca.rt with this new one or any other.${NC}"
 echo -e "${YEL}2. sudo cp /tmp/ca.crt /usr/local/share/ca-certificates/.${NC}"
 echo -e "${YEL}3. update-ca-certificates${NC}"
-
-roll "In order to sign a certificate for a client, server or another CA; run script p2"
 }
 
+
 start
-change_hostname
-Disable_selinux
-Enable_EPEL_RSA
-mkdir_PKI_and_perms
-edit_vars
-build_ca
+
 end
