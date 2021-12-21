@@ -56,7 +56,7 @@ sudo sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
 
 Enable_EPEL_RSA() {
 sudo dnf install epel-release -y
-sudo dnf install easy-rsa
+sudo dnf install easy-rsa -y
 }
 
 mkdir_PKI_and_perms(){
@@ -64,7 +64,8 @@ mkdir_PKI_and_perms(){
 mkdir ~/easy-rsa
 ln -s /usr/share/easy-rsa/3/* ~/easy-rsa/
 chmod 700 /home/g05-rootca01/easy-rsa
-./home/g05-rootca01/easy-rsa/easyrsa init-pki
+cd ~/easy-rsa
+./easyrsa init-pki
 }
 
 edit_vars() {
@@ -81,17 +82,38 @@ EOL
 
 }
 
-end() {
+build_ca() {
 clear
 roll "Part one of the script is about done; choose a secure password and remember it"
-roll "Run part two after selecting the password."
-./home/g05-rootca01/easy-rsa/easyrsa build-ca
+roll "Next just fill-in the Host name as the DN [g05-rootca01]"
+cd ~/easy-rsa
+./easyrsa build-ca
 }
 
+end() {
+clear
+roll "Underneath is your distributable certificate to all hosts."
+roll "A workable copy is distributed to the desktop.
+cat ~/easy-rsa/pki/ca.crt
+cp /home/g05-rootca01/easy-rsa/easyrsa/pki/ca.crt /home/g05-rootca01/Desktop
+clear
+roll "Instructions to import certificate on other machines:"
+roll "On CentOS, Fedora or other RedHat distro's do the following"
+echo -e "${YEL}1. Change /tmp/ca.crt with this new one or any other.${NC}"
+echo -e "${YEL}2. sudo cp /tmp/ca.crt /etc/pki/ca-trust/source/anchors/.${NC}"
+echo -e "${YEL}3. update-ca-trust${NC}"
+roll "${RED}Debian and Ubuntu derived distro's. ${NC}"
+echo -e "${YEL}1. Change /tmp/ca.rt with this new one or any other.${NC}"
+echo -e "${YEL}2. sudo cp /tmp/ca.crt /usr/local/share/ca-certificates/.${NC}"
+echo -e "${YEL}3. update-ca-certificates${NC}"
+
+}
 
 start
 change_hostname
 Disable_selinux
 Enable_EPEL_RSA
 mkdir_PKI_and_perms
+edit_vars
+build_ca
 end
