@@ -49,7 +49,7 @@ fi
 read_input(){
 clear
 echo -e "Enter the name of the server i.e: Moodle, DNS01, DNS02, Proxy"
-read -p  'Enter name: ' name
+read -p  '' name
 read -p  'Enter name: ' name
 roll "Enter the type: client, server or ca"
 read -p 'Enter type: ' type
@@ -63,7 +63,7 @@ openssl genrsa -out $name-$type.key
 openssl req -new -key $name-$type.key -out $name-$type.req
 cd ~/easy-rsa
 ./easyrsa import-req ~/Desktop/$name-csr/$name-$type.req $name-$type
-./easyrea sign-req $type $name-$type
+./easyrsa sign-req $type $name-$type
 
 }
 
