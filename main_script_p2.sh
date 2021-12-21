@@ -49,10 +49,9 @@ fi
 read_input(){
 clear
 echo -e "Enter the name of the server i.e: Moodle, DNS01, DNS02, Proxy"
-echo ""
-read -t 2000000000 'Enter name: ' name
+read -p  'Enter name: ' name
+read -p  'Enter name: ' name
 roll "Enter the type: client, server or ca"
-echo ""
 read -p 'Enter type: ' type
 echo -e "Information entered: $name is a $type"
 }
