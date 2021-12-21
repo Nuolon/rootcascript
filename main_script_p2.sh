@@ -79,7 +79,7 @@ roll "On CentOS, Fedora or other RedHat distro's do the following"
 echo -e "${YEL}1. Change /tmp/ca.crt with this new one or any other.${NC}"
 echo -e "${YEL}2. sudo cp /tmp/ca.crt /etc/pki/ca-trust/source/anchors/.${NC}"
 echo -e "${YEL}3. update-ca-trust${NC}"
-roll "${RED}Debian and Ubuntu derived distro's. ${NC}"
+roll "Debian and Ubuntu derived distro's."
 echo -e "${YEL}1. Change /tmp/ca.rt with this new one or any other.${NC}"
 echo -e "${YEL}2. sudo cp /tmp/ca.crt /usr/local/share/ca-certificates/.${NC}"
 echo -e "${YEL}3. update-ca-certificates${NC}"
@@ -87,5 +87,6 @@ echo -e "${YEL}3. update-ca-certificates${NC}"
 
 
 start
-
+read_input
+creating_dirs_and_certs
 end
