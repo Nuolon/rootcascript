@@ -79,7 +79,6 @@ set_var EASYRSA_REQ_OU         "Community"
 set_var EASYRSA_ALGO           "ec"
 set_var EASYRSA_DIGEST         "sha512"
 EOL
-
 }
 
 build_ca() {
@@ -93,7 +92,7 @@ cd ~/easy-rsa
 end() {
 clear
 roll "Underneath is your distributable certificate to all hosts."
-roll "A workable copy is distributed to the desktop.
+roll "A workable copy is distributed to the desktop."
 cat ~/easy-rsa/pki/ca.crt
 cp /home/g05-rootca01/easy-rsa/easyrsa/pki/ca.crt /home/g05-rootca01/Desktop
 clear
@@ -106,7 +105,6 @@ roll "${RED}Debian and Ubuntu derived distro's. ${NC}"
 echo -e "${YEL}1. Change /tmp/ca.rt with this new one or any other.${NC}"
 echo -e "${YEL}2. sudo cp /tmp/ca.crt /usr/local/share/ca-certificates/.${NC}"
 echo -e "${YEL}3. update-ca-certificates${NC}"
-
 }
 
 start
