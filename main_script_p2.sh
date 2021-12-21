@@ -49,12 +49,13 @@ fi
 read_input(){
 clear
 echo -e "Enter the name of the server i.e: Moodle, DNS01, DNS02, Proxy"
+read -p
 echo ""
-read -p 'Enter name: ' name2
+read -p 'Enter name: ' name
 roll "Enter the type: client, server or ca"
 echo ""
 read -p 'Enter type: ' type
-echo -e "Information entered: $name2 is a $type"
+echo -e "Information entered: $name is a $type"
 }
 
 creating_dirs_and_certs() {
