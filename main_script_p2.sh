@@ -73,7 +73,8 @@ clear
 roll "Underneath is your distributable certificate from: $name $type."
 roll "A workable copy is distributed to the desktop."
 cat ~/easy-rsa/pki/issued/$name-$type.crt
-cp ~/easy-rsa/pki/issued/$name-$type.crt /home/g05-rootca01/Desktop
+cp ~/easy-rsa/pki/issued/$name-$type.crt /home/g05-rootca01/$name-$type
+cp ~/easy-rsa/pki/ca.crt /home/g05-rootca01/$name-$type
 clear
 roll "Instructions to import certificate on other machines:"
 roll "On CentOS, Fedora or other RedHat distro's do the following"
